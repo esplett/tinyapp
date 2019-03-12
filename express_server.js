@@ -10,8 +10,13 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+//Use the example below as a reference for
+//what this route handler should look like.
+// is the same example
+app.get("/urls", (req, res) => {
+  //urls is the key in the object
+  let templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
 });
 
 //endpoints
