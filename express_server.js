@@ -2,6 +2,9 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
 
 app.set("view engine", "ejs");
 
@@ -10,13 +13,14 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-//Use the example below as a reference for
-//what this route handler should look like.
-// is the same example
 app.get("/urls", (req, res) => {
   //urls is the key in the object
   let templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
+});
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
 });
 
 app.get("/urls/:shortURL", (req, res) => {
