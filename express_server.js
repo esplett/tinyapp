@@ -8,11 +8,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
 
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+//GET requests
 app.get("/urls", (req, res) => {
   //urls is the key in the object
   let templateVars = { urls: urlDatabase };
@@ -32,6 +37,23 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+//POST requests
+app.post("/urls", (req, res) => {
+  // Log the POST request body to the console
+  console.log(req.body);
+  // Respond with 'Ok' (we will replace this)
+  res.send("Ok");
 });
+
+//Functions
+
+//produce a string of 6 random alphanumeric characters
+function generateRandomString() {
+var anysize = 6;
+var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+var result= "";
+  for (var i = 0; i < anysize; i++ ) {
+    result += charset[Math.floor(Math.random() * charset.length)];
+  }
+return result;
+}
