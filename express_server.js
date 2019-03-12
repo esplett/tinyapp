@@ -37,12 +37,16 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+// app.get("/u/:shortURL", (req, res) => {
+//   // const longURL = ...
+//   res.redirect(longURL);
+// });
+
 //POST requests
 app.post("/urls", (req, res) => {
-  // Log the POST request body to the console
-  console.log(req.body);
-  // Respond with 'Ok' (we will replace this)
-  res.send("Ok");
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL
+  res.redirect(`/urls/${shortURL}`)
 });
 
 //Functions
