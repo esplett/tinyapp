@@ -8,14 +8,18 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>TinyApp</title>
 </head>
+
 <body style="font-size:20px; padding:50px;">
 
-  <h2>LONGURL</h2>
-    <button type="button">
-    <a href="#">Create a new url</a>
-    </button>
+<header>
+    <% include ../views/partials/_header %>
+</header>
 
-    <p><li><%= shortURL %>: <%= longURL %></li></p>
+    <a href="#">Create New Tiny URL</a>
+
+
+    <p><li>Tiny URL for <%= longURL %></p>
+    <p><%= shortURL %> </li></p>
 
 </body>
 </html>
