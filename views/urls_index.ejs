@@ -6,6 +6,15 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+  <title>Font Awesome Icons</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <style>
+
+  </style>
+
   <title>TinyApp</title>
 </head>
 
@@ -15,10 +24,30 @@
     <% include ../views/partials/_header %>
 </header>
   <a href="/urls/new">Create New Tiny URL</a>
-  <p><h3>My URLS</h2></p>
-    <ul>
+  <p><h4>My URLS</h4></p>
+
+
+    <ul style="list-style: none;">
       <% for (var shortURL in urls) { %>
-        <li><%= shortURL %>: <%=urls[shortURL] %></li>
+        <li>
+
+          <form method="POST" action="<%= shortURL %>/delete">
+
+          <%= shortURL %>
+
+          <!-- ARROW  -->
+          <span style='font-size:30px;'>&#8594;</span>
+
+          <a href="<%= urls[shortURL]%>"><%= urls[shortURL] %></a>
+
+         <button style="font-size: 18px">Delete<i class="fa fa-trash-o"></i></button>
+
+          </form>
+
+      </li>
+
+
+
       <% }; %>
     </ul>
 

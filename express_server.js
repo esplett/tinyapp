@@ -45,12 +45,22 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 //POST requests
+
+//save short and longURL to the database
 app.post("/urls", (req, res) => {
-  //save short and longURL to the database
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`)
 });
+
+//deletes the shortURLS
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = generateRandomString();
+  delete urlDatabase[req.params.shortURL]
+  res.redirect(`/urls/`)
+});
+
+
 
 //Functions
 
