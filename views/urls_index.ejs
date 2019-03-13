@@ -12,13 +12,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <style>
-    li a {
-      padding: 30px;
-    }
-    li {
-      list-style: none;
-    }
-
     i {
       padding: 0px 0px 0px 7px;
     }
@@ -29,7 +22,6 @@
       background-color: #FFFFFFFF;
       color: red;
     }
-
   </style>
 
   <title>TinyApp</title>
@@ -46,9 +38,8 @@
   <a href="/urls/new">Create New Tiny URL</a>
 
   <table class="table">
-    <ul style="list-style: none;">
       <% for (var shortURL in urls) { %>
-        <li>
+      <tr>
 
           <form method="POST" action="<%= shortURL %>/delete">
 
@@ -68,9 +59,10 @@
           </td>
 
           </form>
-      </li>
+      </tr>
+
       <% }; %>
-    </ul>
+
   </table>
 
 </body>
