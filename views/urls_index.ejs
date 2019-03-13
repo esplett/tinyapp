@@ -15,6 +15,9 @@
     li a {
       padding: 30px;
     }
+    li {
+      list-style: none;
+    }
 
     i {
       padding: 0px 0px 0px 7px;
@@ -42,29 +45,33 @@
 
   <a href="/urls/new">Create New Tiny URL</a>
 
+  <table class="table">
     <ul style="list-style: none;">
       <% for (var shortURL in urls) { %>
         <li>
 
           <form method="POST" action="<%= shortURL %>/delete">
 
-          <%= shortURL %>
+          <td><%= shortURL %>
 
           <!-- ARROW  -->
           <span style='font-size:30px;'>&#8594;</span>
+          </td>
 
-          <a class="col-sm-4" href="<%= urls[shortURL]%>"><%= urls[shortURL] %></a>
+          <td><a class="col-sm-4" href="<%= urls[shortURL]%>"><%= urls[shortURL] %></a>
+          </td>
 
-          <a href="/urls/<%= shortURL%>">Edit</a>
+          <td><a href="/urls/<%= shortURL%>">Edit</a>
+          </td>
 
-         <button >Delete<i class="fa fa-trash-o"></i></button>
+          <td><button >Delete<i class="fa fa-trash-o"></i></button>
+          </td>
 
           </form>
-
       </li>
-
       <% }; %>
     </ul>
+  </table>
 
 </body>
 </html>
