@@ -1,6 +1,6 @@
-var express = require("express");
-var app = express();
-var PORT = 8080; // default port 8080
+const express = require("express");
+const app = express();
+const PORT = 8080; // default port 8080
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -29,7 +29,8 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  let templateVars = { shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
 
@@ -45,6 +46,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 //POST requests
 app.post("/urls", (req, res) => {
+  //save short and longURL to the database
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`)
@@ -54,9 +56,9 @@ app.post("/urls", (req, res) => {
 
 //produce a string of 6 random alphanumeric characters
 function generateRandomString() {
-var anysize = 6;
-var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-var result= "";
+let anysize = 6;
+let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+let result= "";
   for (var i = 0; i < anysize; i++ ) {
     result += charset[Math.floor(Math.random() * charset.length)];
   }
