@@ -5,6 +5,9 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+const cookieParser = require('cookie-parser')
+app.use(cookieParser())
+
 
 app.set("view engine", "ejs");
 
@@ -12,25 +15,37 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-var urlDatabase = {
+let urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+
+
 //GET requests
+
 app.get("/urls", (req, res) => {
-  //urls is the key in the object
-  let templateVars = { urls: urlDatabase };
+  //renders all the URLS in urlDatabase
+  let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"],
+  };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+    username: req.cookies["username"],
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL] };
+  let templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies["username"]
+  };
   res.render("urls_show", templateVars);
 });
 
@@ -46,26 +61,37 @@ app.get("/u/:shortURL", (req, res) => {
 
 //POST requests
 
-//save short and longURL to the database
+// urls_new - save short & longURL to urlDatabase
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`)
 });
 
-//deletes the shortURLS
+//urls_index - deletes the shortURLS (DELETE)
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = generateRandomString();
   delete urlDatabase[req.params.shortURL]
   res.redirect(`/urls/`)
 });
 
-//updates the shortURLS
+//urls_show - updates the shortURLS (PUT/UPDATE)
 app.post("/urls/:shortURL/", (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect(`/urls/`)
 });
 
+//urls_index - sets cookie at login
+app.post("/login", function (req, res) {
+  res.cookie("username", req.body.username)
+  res.redirect("/urls")
+})
+
+
+
+
+  // const{username} = req.body;
+  //stores cookies as name and value
 
 //Functions
 

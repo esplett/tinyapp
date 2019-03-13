@@ -21,13 +21,15 @@
     <% include ../views/partials/_header %>
 </header>
 
-    <a href="/urls/new">Create New Tiny URL</a>
-
+    <p><a href="/urls/new">Create New Tiny URL</a></p>
+    <p><a href="/urls/">Back to all URLS</a></p>
 
     <p><li style="list-style: none;">ShortURL: <b><%= shortURL %></b>
 
     <!-- ARROW  -->
     <span style='font-size:30px;'>&#8594;</span>
+
+    <a href="<%= longURL%>"><%= longURL%></a>
 
     </li></p>
 
