@@ -18,11 +18,11 @@ app.listen(PORT, () => {
 const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
-    userID: "aj48lW",
+    userID: "esthersmart",
     },
   "9sm5xK": {
     longURL:"http://www.google.com",
-    userID: "aJ49jW",
+    userID: "esthersmart",
     },
 };
 
@@ -93,8 +93,11 @@ app.get("/urls.json", (req, res) => {
 
 //redirects shortURLs to long URL website
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
-  res.redirect(longURL);
+  const URLobj = urlDatabase[req.params.shortURL];
+  if (URLobj)
+    res.redirect(URLobj.longURL);
+  else
+  res.redirect("/urls");
 });
 
 app.get("/register", (req, res) => {
@@ -133,6 +136,7 @@ app.post("/urls", (req, res) => {
 
 //urls_index - deletes the shortURLS (DELETE)
 app.post("/urls/:shortURL/delete", (req, res) => {
+  //checks if you own the URLS
   let urls = urlsForUser(req.cookies["user_id"]);
   //checks if user owns shortURL
   if (urls[req.params.shortURL]) {
@@ -143,6 +147,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //urls_show - updates the shortURLS (PUT/UPDATE)
 app.post("/urls/:shortURL/", (req, res) => {
+   //checks if you own the URLS
+  let urls = urlsForUser(req.cookies["user_id"]);
   if (urls[req.params.shortURL]) {
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   }
