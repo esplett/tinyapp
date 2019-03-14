@@ -16,8 +16,14 @@ app.listen(PORT, () => {
 
 // Databases
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "aj48lW",
+    },
+  "9sm5xK": {
+    longURL:"http://www.google.com",
+    userID: "aJ49jW",
+    },
 };
 
 const users = {
@@ -43,8 +49,8 @@ const users = {
 app.get("/urls", (req, res) => {
   const user_id = req.cookies["user_id"]
   //renders all the URLS in urlDatabase
-  console.log(user_id)
   let templateVars = {
+
     urls: urlDatabase,
     user: users[user_id],
     email: users[user_id].email,
@@ -57,14 +63,18 @@ app.get("/urls/new", (req, res) => {
   let templateVars = {
     user: users[user_id]
   };
+  if (!user_id) {
+    res.redirect("/login")
+  } else {
   res.render("urls_new", templateVars);
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   const user_id = req.cookies["user_id"]
   let templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[user_id]
   };
   res.render("urls_show", templateVars);
@@ -96,7 +106,7 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-//trying to redirect to login screen
+//LOGOUT redirect to login screen
 app.get("/logout", (req, res) => {
   res.redirect("/login");
 });
@@ -107,7 +117,10 @@ app.get("/logout", (req, res) => {
 // urls_new - save short & longURL to urlDatabase
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {
+   longURL:  req.body.longURL,
+   user_id: req.cookies["user_id"],
+  }
   res.redirect(`/urls/${shortURL}`)
 });
 
@@ -120,7 +133,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //urls_show - updates the shortURLS (PUT/UPDATE)
 app.post("/urls/:shortURL/", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL;
+  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   res.redirect(`/urls/`)
 });
 
@@ -172,6 +185,12 @@ app.post("/logout", function (req, res) {
 
 
 //Functions
+
+// function urlsForUser(id) {
+//   for (let user_id in urlDatabase) {
+//     if ()
+//   }
+// }
 
 function findUser(email) {
   for (let user_id in users) {

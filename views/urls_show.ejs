@@ -21,9 +21,6 @@
     <% include ../views/partials/_header %>
 </header>
 
-    <p><a href="/urls/new">Create New Tiny URL</a></p>
-    <p><a href="/urls/">Back to all URLS</a></p>
-
     <p><li style="list-style: none;">ShortURL: <b><%= shortURL %></b>
 
     <!-- ARROW  -->
@@ -32,7 +29,6 @@
     <a href="<%= longURL%>"><%= longURL%></a>
 
     </li></p>
-
 
     <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
 
