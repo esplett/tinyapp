@@ -48,15 +48,12 @@ const users = {
 
 app.get("/urls", (req, res) => {
   const user_id = req.cookies["user_id"]
-  //renders all the URLS in urlDatabase
-
   //check if user is logged in
   if (users[user_id]) {
     let templateVars = {
       urls: urlsForUser(user_id),
       user: users[user_id],
     };
-    console.log(urlDatabase)
     res.render("urls_index", templateVars);
   } else {
     //potentially make error page
@@ -83,7 +80,11 @@ app.get("/urls/:shortURL", (req, res) => {
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[user_id]
   };
+  if (!user_id) {
+    res.redirect("/login")
+  } else {
   res.render("urls_show", templateVars);
+  }
 });
 
 app.get("/urls.json", (req, res) => {
@@ -132,14 +133,19 @@ app.post("/urls", (req, res) => {
 
 //urls_index - deletes the shortURLS (DELETE)
 app.post("/urls/:shortURL/delete", (req, res) => {
-  const shortURL = generateRandomString();
-  delete urlDatabase[req.params.shortURL]
+  let urls = urlsForUser(req.cookies["user_id"]);
+  //checks if user owns shortURL
+  if (urls[req.params.shortURL]) {
+    delete urlDatabase[req.params.shortURL]
+  }
   res.redirect(`/urls/`)
 });
 
 //urls_show - updates the shortURLS (PUT/UPDATE)
 app.post("/urls/:shortURL/", (req, res) => {
-  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+  if (urls[req.params.shortURL]) {
+    urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+  }
   res.redirect(`/urls/`)
 });
 
