@@ -33,15 +33,10 @@
     <% include ../views/partials/_header %>
 </header>
 
-
-
-  <a href="/urls/new">Create New Tiny URL</a>
-
   <table class="table">
       <% for (var shortURL in urls) { %>
       <tr>
-
-          <form method="POST" action="<%= shortURL %>/delete">
+          <form method="POST" action="/urls/<%=  shortURL %>/delete">
 
           <td><%= shortURL %>
 
@@ -60,9 +55,7 @@
 
           </form>
       </tr>
-
       <% }; %>
-
   </table>
 
 </body>
