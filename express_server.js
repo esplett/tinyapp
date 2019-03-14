@@ -49,13 +49,19 @@ const users = {
 app.get("/urls", (req, res) => {
   const user_id = req.cookies["user_id"]
   //renders all the URLS in urlDatabase
-  let templateVars = {
 
-    urls: urlDatabase,
-    user: users[user_id],
-    email: users[user_id].email,
-  };
-  res.render("urls_index", templateVars);
+  //check if user is logged in
+  if (users[user_id]) {
+    let templateVars = {
+      urls: urlsForUser(user_id),
+      user: users[user_id],
+    };
+    console.log(urlDatabase)
+    res.render("urls_index", templateVars);
+  } else {
+    //potentially make error page
+    res.status(403).end("Please login or register")
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -119,7 +125,7 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = {
    longURL:  req.body.longURL,
-   user_id: req.cookies["user_id"],
+   userID: req.cookies["user_id"],
   }
   res.redirect(`/urls/${shortURL}`)
 });
@@ -186,11 +192,15 @@ app.post("/logout", function (req, res) {
 
 //Functions
 
-// function urlsForUser(id) {
-//   for (let user_id in urlDatabase) {
-//     if ()
-//   }
-// }
+function urlsForUser(id) {
+  let obj = {};
+  for (let shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      obj[shortURL] = (urlDatabase[shortURL]);
+    }
+  }
+  return obj;
+}
 
 function findUser(email) {
   for (let user_id in users) {
