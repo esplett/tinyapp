@@ -44,14 +44,14 @@ app.get("/urls", (req, res) => {
   //renders all the URLS in urlDatabase
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"],
+    user: req.cookies["user_id"],
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    user: req.cookies["user_id"],
   };
   res.render("urls_new", templateVars);
 });
@@ -60,7 +60,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    user: req.cookies["user_id"]
   };
   res.render("urls_show", templateVars);
 });
@@ -77,10 +77,24 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/register", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    user: req.cookies["user_id"],
   };
   res.render("register", templateVars);
 });
+
+app.get("/login", (req, res) => {
+  let templateVars = {
+    user: req.cookies["user_id"],
+  };
+  res.render("login", templateVars);
+});
+
+// //trying to redirect to login screen
+// app.get("/logout", (req, res) => {
+//   res.redirect("/login");
+// });
+
+
 
 
 //POST requests
@@ -108,13 +122,13 @@ app.post("/urls/:shortURL/", (req, res) => {
 //urls_index - sets cookie at login
 app.post("/login", function (req, res) {
   //stores cookies as name and value
-  res.cookie("username", req.body.username)
+  res.cookie("user", req.body.user)
   res.redirect("/urls")
 })
 
 //logout
 app.post("/logout", function (req, res) {
-  res.clearCookie("username", req.params.username)
+  res.clearCookie("user", req.params.user)
   res.redirect("/urls")
 })
 
@@ -131,7 +145,7 @@ app.post("/register", function (req, res) {
     password
   }
   if (email === "" || password === "") {
-    res.status(400).send("Please write your username and password");
+    res.status(400).send("Please write your user and password");
   } else if (findUser(email)){
     res.status(400).send("This email is already registered");
   } else {
