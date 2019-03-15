@@ -139,7 +139,6 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`)
 });
 
-
 //urls_index - deletes the shortURLS (DELETE)
 app.post("/urls/:shortURL/delete", (req, res) => {
   //checks if you own the URLS
