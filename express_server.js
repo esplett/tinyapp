@@ -1,12 +1,11 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-
 const cookieParser = require('cookie-parser')
 app.use(cookieParser())
+const bcrypt = require('bcrypt');
 
 app.set("view engine", "ejs");
 
@@ -160,12 +159,11 @@ app.post("/login", function (req, res) {
   let email = req.body.email;
   let password = req.body.password;
   let user = findUser(email);
-
   if (password === "") {
      res.status(403).end("Please enter your password!")
   } else if (!user) {
     res.status(403).end("No user with that email found!")
-  } else if (password !== user.password) {
+  } else if (!bcrypt.compareSync(password, user.password)) {
       res.status(403).send("Wrong password!");
   } else {
     //set the user_id cookie with matching user's id
@@ -176,21 +174,22 @@ app.post("/login", function (req, res) {
 
 //POST /register
 app.post("/register", function (req, res) {
-  //adds new user object to global users object
   let email = req.body.email;
-  let password = req.body.password;
-  let id = generateRandomString();
-  res.cookie("user_id", id)
-  users[id] = {
-    id,
-    email,
-    password
-  }
+  const password = req.body.password;
   if (email === "" || password === "") {
     res.status(400).send("Please write your user and password");
   } else if (findUser(email)){
     res.status(400).send("This email is already registered");
   } else {
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  let id = generateRandomString();
+  res.cookie("user_id", id)
+    users[id] = {
+      id,
+      email,
+      password: hashedPassword
+    }
+    console.log(192, users)
     res.redirect("/urls")
   }
 })
@@ -218,10 +217,9 @@ function findUser(email) {
   for (let user_id in users) {
     if (users[user_id].email === email) {
       return users[user_id];
-    } else {
-      return null;
     }
   }
+  return null;
 }
 
 //produce a string of 6 random alphanumeric characters
