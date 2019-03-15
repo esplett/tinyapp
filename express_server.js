@@ -51,6 +51,21 @@ const users = {
 
 //GET requests
 
+//root address
+app.get("/", (req, res) => {
+  const user_id = req.session.user_id
+  //check if user is logged in
+  if (users[user_id]) {
+    let templateVars = {
+      urls: urlsForUser(user_id),
+      user: users[user_id],
+    };
+    res.redirect("/urls")
+  } else {
+    res.redirect("/login")
+  }
+});
+
 app.get("/urls", (req, res) => {
   const user_id = req.session.user_id
   //check if user is logged in
@@ -78,19 +93,25 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
+//Update/Edit page
 app.get("/urls/:shortURL", (req, res) => {
   const user_id = req.session.user_id;
+  const urls = urlsForUser(req.session.user_id);
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[user_id]
   };
   if (!user_id) {
-    res.redirect("/login")
+    res.status(403).send('Please <a href="/login">login</a> to edit shortURLS.')
+  //checks if user owns shortURL
+  } else if (urls[req.params.shortURL]) {
+    res.render("urls_show", templateVars);
   } else {
-  res.render("urls_show", templateVars);
+    res.status(403).send('This short url does not belong to you! Please <a href="/login">login</a> to your own account.')
   }
 });
+
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -99,10 +120,11 @@ app.get("/urls.json", (req, res) => {
 //redirects shortURLs to long URL website
 app.get("/u/:shortURL", (req, res) => {
   const URLobj = urlDatabase[req.params.shortURL];
-  if (URLobj)
+  if (URLobj) {
     res.redirect(URLobj.longURL);
-  else
-  res.redirect("/urls");
+  } else {
+    res.status(403).send('This shortURL does not exist! Head back to <a href="/urls">urls</a>.')
+  }
 });
 
 app.get("/register", (req, res) => {
@@ -142,18 +164,19 @@ app.post("/urls", (req, res) => {
 //urls_index - deletes the shortURLS (DELETE)
 app.post("/urls/:shortURL/delete", (req, res) => {
   //checks if you own the URLS
-  let urls = urlsForUser(req.session.user_id);
+  const urls = urlsForUser(req.session.user_id);
   //checks if user owns shortURL
   if (urls[req.params.shortURL]) {
     delete urlDatabase[req.params.shortURL]
+  } else {
+    res.redirect(`/urls/`)
   }
-  res.redirect(`/urls/`)
 });
 
 //urls_show - updates the shortURLS (PUT/UPDATE)
 app.post("/urls/:shortURL/", (req, res) => {
    //checks if you own the URLS
-  let urls = urlsForUser(req.session.user_id);
+  const urls = urlsForUser(req.session.user_id);
   if (urls[req.params.shortURL]) {
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   }
@@ -162,9 +185,9 @@ app.post("/urls/:shortURL/", (req, res) => {
 
 //LOGIN form
 app.post("/login", function (req, res) {
-  let email = req.body.email;
-  let password = req.body.password;
-  let user = findUser(email);
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = findUser(email);
   if (password === "") {
     res.status(403).send('Please enter your password! Try <a href="/login">again</a>.')
   } else if (!user) {
@@ -202,8 +225,8 @@ app.post("/register", function (req, res) {
 
 //logout
 app.post("/logout", function (req, res) {
+  //clears cookies
   req.session = null;
-  // ("user_id", req.params.user)
   res.redirect("/login")
 })
 
