@@ -177,8 +177,7 @@ app.post("/login", function (req, res) {
   }
 })
 
-
-//POST /register
+//POST register form
 app.post("/register", function (req, res) {
   const email = req.body.email;
   const password = req.body.password;
