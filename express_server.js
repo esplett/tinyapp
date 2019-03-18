@@ -4,7 +4,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 const bcrypt = require('bcrypt');
-var cookieSession = require('cookie-session')
+var cookieSession = require('cookie-session');
 
 app.use(cookieSession({
   name: 'session',
@@ -14,10 +14,6 @@ app.use(cookieSession({
 }))
 
 app.set("view engine", "ejs");
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
 
 // Databases
 const urlDatabase = {
@@ -53,21 +49,21 @@ const users = {
 
 //root address
 app.get("/", (req, res) => {
-  const user_id = req.session.user_id
+  const user_id = req.session.user_id;
   //check if user is logged in
   if (users[user_id]) {
     let templateVars = {
       urls: urlsForUser(user_id),
       user: users[user_id],
     };
-    res.redirect("/urls")
+    res.redirect("/urls");
   } else {
-    res.redirect("/login")
+    res.redirect("/login");
   }
 });
 
 app.get("/urls", (req, res) => {
-  const user_id = req.session.user_id
+  const user_id = req.session.user_id;
   //check if user is logged in
   if (users[user_id]) {
     let templateVars = {
@@ -77,7 +73,7 @@ app.get("/urls", (req, res) => {
     res.render("urls_index", templateVars);
   } else {
     //potentially make error page
-    res.status(403).send('Please <a href="/login">login</a> or <a href="/register">register</a>')
+    res.status(403).send('Please <a href="/login">login</a> or <a href="/register">register</a>');
   }
 });
 
@@ -87,7 +83,7 @@ app.get("/urls/new", (req, res) => {
     user: users[user_id]
   };
   if (!user_id) {
-    res.redirect("/login")
+    res.redirect("/login");
   } else {
   res.render("urls_new", templateVars);
   }
@@ -108,7 +104,7 @@ app.get("/urls/:shortURL", (req, res) => {
   } else if (urls[req.params.shortURL]) {
     res.render("urls_show", templateVars);
   } else {
-    res.status(403).send('This short url does not belong to you! Please <a href="/login">login</a> to your own account.')
+    res.status(403).send('This short url does not belong to you! Please <a href="/login">login</a> to your own account.');
   }
 });
 
@@ -123,7 +119,7 @@ app.get("/u/:shortURL", (req, res) => {
   if (URLobj) {
     res.redirect(URLobj.longURL);
   } else {
-    res.status(403).send('This shortURL does not exist! Head back to <a href="/urls">urls</a>.')
+    res.status(403).send('This shortURL does not exist! Head back to <a href="/urls">urls</a>.');
   }
 });
 
@@ -158,7 +154,7 @@ app.post("/urls", (req, res) => {
    longURL: req.body.longURL,
    userID: req.session.user_id
   }
-  res.redirect(`/urls/${shortURL}`)
+  res.redirect(`/urls/${shortURL}`);
 });
 
 //urls_index - deletes the shortURLS (DELETE)
@@ -167,9 +163,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   const urls = urlsForUser(req.session.user_id);
   //checks if user owns shortURL
   if (urls[req.params.shortURL]) {
-    delete urlDatabase[req.params.shortURL]
+    delete urlDatabase[req.params.shortURL];
+    res.redirect(`/urls/`);
   } else {
-    res.redirect(`/urls/`)
+    res.redirect(`/urls/`);
   }
 });
 
@@ -180,7 +177,7 @@ app.post("/urls/:shortURL/", (req, res) => {
   if (urls[req.params.shortURL]) {
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   }
-  res.redirect(`/urls/`)
+  res.redirect(`/urls/`);
 });
 
 //LOGIN form
@@ -189,12 +186,12 @@ app.post("/login", function (req, res) {
   const password = req.body.password;
   const user = findUser(email);
   if (password === "") {
-    res.status(403).send('Please enter your password! Try <a href="/login">again</a>.')
+    res.status(403).send('Please enter your password! Try <a href="/login">again</a>.');
   } else if (!user) {
-    res.status(403).send('No user with that email found! Try <a href="/login">again</a>.')
+    res.status(403).send('No user with that email found! Try <a href="/login">again</a>.');
   } else if (bcrypt.compareSync(password, user.password)) {
     req.session.user_id = user.id;
-    res.redirect("/urls")
+    res.redirect("/urls");
   } else {
     res.status(403).send('Wrong password! Try <a href="/login">again</a>.');
   }
@@ -217,9 +214,7 @@ app.post("/register", function (req, res) {
       email,
       password: hashedPassword
     };
-    console.log("req session register ", req.session)
-    console.log(192 , users)
-    res.redirect("/urls")
+    res.redirect("/urls");
   }
 })
 
@@ -227,7 +222,7 @@ app.post("/register", function (req, res) {
 app.post("/logout", function (req, res) {
   //clears cookies
   req.session = null;
-  res.redirect("/login")
+  res.redirect("/login");
 })
 
 //Functions
@@ -261,4 +256,8 @@ let result= "";
   }
 return result;
 }
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
 
