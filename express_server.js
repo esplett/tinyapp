@@ -49,12 +49,12 @@ const users = {
 
 //root address
 app.get("/", (req, res) => {
-  const user_id = req.session.user_id;
+  const userId = req.session.userId;
   //check if user is logged in
-  if (users[user_id]) {
+  if (users[userId]) {
     let templateVars = {
-      urls: urlsForUser(user_id),
-      user: users[user_id],
+      urls: urlsForUser(userId),
+      user: users[userId],
     };
     res.redirect("/urls");
   } else {
@@ -63,12 +63,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const user_id = req.session.user_id;
+  const userId = req.session.userId;
   //check if user is logged in
-  if (users[user_id]) {
+  if (users[userId]) {
     let templateVars = {
-      urls: urlsForUser(user_id),
-      user: users[user_id],
+      urls: urlsForUser(userId),
+      user: users[userId],
     };
     res.render("urls_index", templateVars);
   } else {
@@ -78,11 +78,11 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const user_id = req.session.user_id;
+  const userId = req.session.userId;
   let templateVars = {
-    user: users[user_id]
+    user: users[userId]
   };
-  if (!user_id) {
+  if (!userId) {
     res.redirect("/login");
   } else {
   res.render("urls_new", templateVars);
@@ -91,14 +91,14 @@ app.get("/urls/new", (req, res) => {
 
 //Update/Edit page
 app.get("/urls/:shortURL", (req, res) => {
-  const user_id = req.session.user_id;
-  const urls = urlsForUser(req.session.user_id);
+  const userId = req.session.userId;
+  const urls = urlsForUser(req.session.userId);
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[user_id]
+    user: users[userId]
   };
-  if (!user_id) {
+  if (!userId) {
     res.status(403).send('Please <a href="/login">login</a> to edit shortURLS.')
   //checks if user owns shortURL
   } else if (urls[req.params.shortURL]) {
@@ -124,17 +124,17 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const user_id = req.session.user_id;
+  const userId = req.session.userId;
   let templateVars = {
-    user: users[user_id]
+    user: users[userId]
   };
   res.render("register", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  const user_id = req.session.user_id;
+  const userId = req.session.userId;
   let templateVars = {
-    user: users[user_id]
+    user: users[userId]
   };
   res.render("login", templateVars);
 });
@@ -152,7 +152,7 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = {
    longURL: req.body.longURL,
-   userID: req.session.user_id
+   userID: req.session.userId
   }
   res.redirect(`/urls/${shortURL}`);
 });
@@ -160,7 +160,7 @@ app.post("/urls", (req, res) => {
 //urls_index - deletes the shortURLS (DELETE)
 app.post("/urls/:shortURL/delete", (req, res) => {
   //checks if you own the URLS
-  const urls = urlsForUser(req.session.user_id);
+  const urls = urlsForUser(req.session.userId);
   //checks if user owns shortURL
   if (urls[req.params.shortURL]) {
     delete urlDatabase[req.params.shortURL];
@@ -173,7 +173,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //urls_show - updates the shortURLS (PUT/UPDATE)
 app.post("/urls/:shortURL/", (req, res) => {
    //checks if you own the URLS
-  const urls = urlsForUser(req.session.user_id);
+  const urls = urlsForUser(req.session.userId);
   if (urls[req.params.shortURL]) {
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
   }
@@ -190,7 +190,7 @@ app.post("/login", function (req, res) {
   } else if (!user) {
     res.status(403).send('No user with that email found! Try <a href="/login">again</a>.');
   } else if (bcrypt.compareSync(password, user.password)) {
-    req.session.user_id = user.id;
+    req.session.userId = user.id;
     res.redirect("/urls");
   } else {
     res.status(403).send('Wrong password! Try <a href="/login">again</a>.');
@@ -208,7 +208,7 @@ app.post("/register", function (req, res) {
   } else {
     const hashedPassword = bcrypt.hashSync(password, 10);
     let id = generateRandomString();
-    req.session.user_id = id;
+    req.session.userId = id;
     users[id] = {
       id,
       email,
@@ -238,9 +238,9 @@ function urlsForUser(id) {
 }
 
 function findUser(email) {
-  for (let user_id in users) {
-    if (users[user_id].email === email) {
-      return users[user_id];
+  for (let userId in users) {
+    if (users[userId].email === email) {
+      return users[userId];
     }
   }
   return null;
